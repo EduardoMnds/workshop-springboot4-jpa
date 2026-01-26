@@ -1,5 +1,6 @@
 package com.dev.course.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -25,6 +26,9 @@ public class Product implements Serializable {
     joinColumns = @JoinColumn(name = "product_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "id.product")
+    private Set<OrderItem> orderItems = new HashSet<>();
 
     public Product() {
 
@@ -80,6 +84,15 @@ public class Product implements Serializable {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    @JsonIgnore
+    public Set<Order> getOrder() {
+        Set<Order> orders = new HashSet<>();
+        for (OrderItem orderItem : orderItems) {
+            orders.add(orderItem.getOrder());
+        }
+        return orders;
     }
 
     @Override
